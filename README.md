@@ -1,8 +1,8 @@
 # SILIARCH
 
-**Adaptive Trusted Hardware & Computing Platform**
+**Adaptive Trusted Hardware and Computing Platform**
 
-VanceBlackwood Industries | RAVENSCROFT Engineering Research
+VanceBlackwood Industries, RAVENSCROFT Engineering Research
 
 SILIARCH is a hardware and systems engineering research project. Its goal is to make device capabilities, security assumptions, and verification results easier to describe, test, and review across different computing platforms.
 
