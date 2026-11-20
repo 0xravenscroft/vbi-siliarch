@@ -90,6 +90,6 @@ See [Trust and Evidence](TRUST_AND_EVIDENCE.md), [Roadmap](../ROADMAP.md), and [
 
 
 **SILIARCH**  
-VanceBlackwood Industries  
+Ravenscroft Industries  
 RAVENSCROFT Engineering Research  
 *Research. Engineer. Verify.*
