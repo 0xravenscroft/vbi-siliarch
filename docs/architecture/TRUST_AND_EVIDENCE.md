@@ -69,6 +69,6 @@ See [System Overview](SYSTEM_OVERVIEW.md) and [Engineering Roadmap](../ROADMAP.m
 
 
 **SILIARCH**  
-VanceBlackwood Industries  
+Ravenscroft Industries  
 RAVENSCROFT Engineering Research  
 *Research. Engineer. Verify.*
