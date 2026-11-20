@@ -1,12 +1,12 @@
 # Device Profile v0.1
 
-Status: Proposed for the first implementation. No parser is published yet.
+Status: Specification published. Initial Python validation is under review; JSON parsing and capability evaluation remain planned.
 
 ## Purpose
 
 A device profile describes claimed capabilities. It does not authenticate a device, measure hardware, or establish a security state.
 
-The first prototype will read one JSON object and validate its fields before comparing it with a separate set of requirements.
+The planned input pipeline will read one JSON object, validate its fields and compare it with a separate set of requirements.
 
 ## Example profile
 
@@ -85,4 +85,12 @@ The tests must be repeatable and must not require network access or physical har
 6. Add a minimal command-line entry point.
 7. Record what the results prove and what they do not prove.
 
+Initial Python validation is published in [`src/siliarch/profile.py`](../../src/siliarch/profile.py), with unit tests in [`tests/test_profile.py`](../../tests/test_profile.py). Neither JSON parsing nor requirement evaluation is implemented yet.
+
 See [System Overview](SYSTEM_OVERVIEW.md) and [Trust and Evidence](TRUST_AND_EVIDENCE.md).
+
+
+**SILIARCH**  
+VanceBlackwood Industries  
+RAVENSCROFT Engineering Research  
+*Research. Engineer. Verify.*
