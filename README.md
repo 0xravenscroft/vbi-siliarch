@@ -46,7 +46,7 @@ All five fields are required. Unexpected fields are rejected. The complete field
 
 The validation functions operate on supplied Python values. The JSON input layer, duplicate-key detection, requirement evaluator and command-line interface are not yet implemented.
 
-The profile validator remains under review. Additional boundary tests and code cleanup are required before treating the Device Profile v0.1 implementation as complete.
+The profile validator remains under review. Boundary tests and code cleanup are still required before Device Profile v0.1 can be considered complete.
 
 ### Run the tests
 
@@ -122,3 +122,9 @@ SILIARCH focuses on trusted hardware and computing. General cyber defense, intel
 Security experiments are restricted to authorized and controlled environments.
 
 No license has been selected. Public repository access does not itself grant permission to reuse or redistribute the source.
+
+
+**SILIARCH**  
+VanceBlackwood Industries  
+RAVENSCROFT Engineering Research  
+*Research. Engineer. Verify.*
