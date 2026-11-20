@@ -1,12 +1,12 @@
 # System Overview
 
-Status: Proposed architecture. The foundation implementation has not started.
+Status: Initial Python validation and unit tests published. JSON ingestion, requirement evaluation and evidence recording remain planned.
 
 ## The problem
 
 A development board, firmware manifest, or configuration file can describe a processor and its capabilities. Those descriptions are useful for software decisions, but they are not hardware measurements and do not prove that a device is trustworthy.
 
-SILIARCH begins by making that distinction explicit. The first component will read a structured profile, check its format, and compare declared capabilities with an engineering requirement.
+SILIARCH begins by making that distinction explicit. The foundation design separates structured profile validation from the later comparison of declared capabilities with engineering requirements.
 
 ## Foundation data flow
 
@@ -19,7 +19,7 @@ flowchart TD
     D --> E[Result record]
 ```
 
-These boxes describe planned software components, not completed modules.
+The diagram describes the intended end-to-end flow. Initial validation is available in [`src/siliarch/profile.py`](../../src/siliarch/profile.py) and is exercised by [`tests/test_profile.py`](../../tests/test_profile.py). Strict JSON ingestion, capability evaluation and result recording remain planned.
 
 A valid assessment means the supplied declaration satisfies a defined requirement. It says nothing by itself about the real device, firmware integrity, or the origin of the declaration.
 
@@ -36,7 +36,7 @@ The parser and validator must reject malformed input. The evaluator must not sil
 
 ## First data contract
 
-The first schema will be versioned and small. Candidate fields are:
+Device Profile v0.1 defines five fields:
 
 | Field | Meaning |
 |---|---|
@@ -46,7 +46,7 @@ The first schema will be versioned and small. Candidate fields are:
 | `memory_bytes` | Claimed memory capacity in bytes |
 | `capabilities` | Claimed hardware features |
 
-Allowed values, type checks, limits, and unknown-field behavior must be specified before implementation. A schema may change between experimental versions.
+Permitted values, type checks, limits and unknown-field behavior are documented in [Device Profile v0.1](DEVICE_PROFILE_V0_1.md). The contract may change in later experimental versions.
 
 ### Worked example
 
@@ -87,3 +87,9 @@ The foundation is ready for review when:
 5. A result clearly distinguishes a declaration from a verified hardware property.
 
 See [Trust and Evidence](TRUST_AND_EVIDENCE.md), [Roadmap](../ROADMAP.md), and [ADR-0001](../decisions/0001-foundation-first.md).
+
+
+**SILIARCH**  
+VanceBlackwood Industries  
+RAVENSCROFT Engineering Research  
+*Research. Engineer. Verify.*
