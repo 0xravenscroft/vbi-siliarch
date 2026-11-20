@@ -1,6 +1,7 @@
 # ADR-0001: Start with a Portable Capability Model
 
-Status: Accepted  
+Status: Accepted
+
 Date: 2026-11-11
 
 ## Context
@@ -41,3 +42,9 @@ Costs:
 Revisit this decision if a hardware experiment reveals that the chosen profile format or interface boundaries cannot represent the required behavior.
 
 Related documents: [System Overview](../architecture/SYSTEM_OVERVIEW.md), [Trust and Evidence](../architecture/TRUST_AND_EVIDENCE.md), [Roadmap](../ROADMAP.md).
+
+
+**SILIARCH**  
+VanceBlackwood Industries  
+RAVENSCROFT Engineering Research  
+*Research. Engineer. Verify.*
