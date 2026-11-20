@@ -85,6 +85,6 @@ See [System Overview](architecture/SYSTEM_OVERVIEW.md), [Trust and Evidence](arc
 
 
 **SILIARCH**  
-VanceBlackwood Industries  
+Ravenscroft Industries  
 RAVENSCROFT Engineering Research  
 *Research. Engineer. Verify.*
