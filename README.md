@@ -2,10 +2,10 @@
 
 **Adaptive Trusted Hardware and Computing Platform**
 
-VanceBlackwood Industries  
+Ravenscroft Industries  
 RAVENSCROFT Engineering Research
 
-SILIARCH is a hardware and systems engineering research project focused on device capability models, secure computing and reproducible verification.
+SILIARCH is a hardware and systems engineering research project within Ravenscroft Industries, focused on device capability models, secure computing and reproducible verification.
 
 The work begins with a narrow but important problem. A device can declare its processor architecture, memory capacity and available interfaces, but a declaration is not proof of the underlying hardware. SILIARCH builds the software foundations needed to assess those declarations without confusing them with measurements or trusted evidence.
 
@@ -125,6 +125,6 @@ No license has been selected. Public repository access does not itself grant per
 
 
 **SILIARCH**  
-VanceBlackwood Industries  
+Ravenscroft Industries  
 RAVENSCROFT Engineering Research  
 *Research. Engineer. Verify.*
