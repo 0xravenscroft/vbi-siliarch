@@ -1,6 +1,6 @@
 # Engineering Roadmap
 
-Status: Planned. No implementation milestone is complete.
+Status: F0 documentation published. F1 development is in progress. No implementation milestone is complete.
 
 This roadmap lists deliverables and exit criteria, not release promises. Progress will be recorded when results can be reproduced.
 
@@ -70,11 +70,11 @@ The schedule can change when tests expose gaps in the foundations.
 
 | Priority | Work item | Status |
 |---|---|---|
-| P0 | Finish architecture documentation | In progress |
-| P0 | Define profile schema version 0.1 | Planned |
-| P0 | Implement strict profile validation | Planned |
+| P0 | Finish architecture documentation | Published; review ongoing |
+| P0 | Define profile schema version 0.1 | Specification published |
+| P0 | Implement strict profile validation | Initial implementation under review |
 | P0 | Evaluate declared capabilities | Planned |
-| P0 | Add deterministic unit tests | Planned |
+| P0 | Add deterministic unit tests | Initial tests published; expansion planned |
 | P1 | Record test provenance | Planned |
 | P1 | Set up basic CI | Planned |
 | P1 | Write first RTL testbench | Planned |
@@ -82,3 +82,9 @@ The schedule can change when tests expose gaps in the foundations.
 Do not mark a work item complete from a commit message alone. Review the artifact and its evidence.
 
 See [System Overview](architecture/SYSTEM_OVERVIEW.md), [Trust and Evidence](architecture/TRUST_AND_EVIDENCE.md), and [ADR-0001](decisions/0001-foundation-first.md).
+
+
+**SILIARCH**  
+VanceBlackwood Industries  
+RAVENSCROFT Engineering Research  
+*Research. Engineer. Verify.*
