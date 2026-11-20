@@ -45,6 +45,6 @@ Related documents: [System Overview](../architecture/SYSTEM_OVERVIEW.md), [Trust
 
 
 **SILIARCH**  
-VanceBlackwood Industries  
+Ravenscroft Industries  
 RAVENSCROFT Engineering Research  
 *Research. Engineer. Verify.*
