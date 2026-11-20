@@ -6,7 +6,7 @@ Status: Design specification. No hardware trust mechanism is implemented yet.
 
 SILIARCH separates three things: a device claim, a software assessment of that claim, and evidence from a test or measurement. They answer different questions and must not be confused.
 
-A profile can be well formed and still be false. A matching capability requirement does not establish that the physical device supports the feature.
+A profile can be well formed and still be false. A matching capability requirement does not establish that the physical device supports the feature. The published Python tests evaluate declared data behavior, not hardware measurements or cryptographic attestation.
 
 ## Boundaries
 
@@ -35,7 +35,7 @@ This table is not a complete threat assessment. Each implementation will documen
 
 ## Evidence records
 
-When executable tests are introduced, an evidence record should include:
+When evidence records are introduced, each record should include:
 
 - Record format version and test identifier
 - Source revision and tool version
@@ -66,3 +66,9 @@ See [System Overview](SYSTEM_OVERVIEW.md) and [Engineering Roadmap](../ROADMAP.m
 ## Reference
 
 [NIST SP 800-193: Platform Firmware Resiliency Guidelines](https://csrc.nist.gov/pubs/sp/800/193/final) is a research reference for later firmware assurance work. No compliance is claimed.
+
+
+**SILIARCH**  
+VanceBlackwood Industries  
+RAVENSCROFT Engineering Research  
+*Research. Engineer. Verify.*
