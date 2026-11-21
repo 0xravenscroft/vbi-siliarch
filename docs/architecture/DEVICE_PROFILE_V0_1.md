@@ -91,6 +91,6 @@ See [System Overview](SYSTEM_OVERVIEW.md) and [Trust and Evidence](TRUST_AND_EVI
 
 
 **SILIARCH**  
-Ravenscroft Industries  
-RAVENSCROFT Engineering Research  
+RAVENSCROFT INDUSTRIES  
+SILIARCH | Engineering Research  
 *Research. Engineer. Verify.*
