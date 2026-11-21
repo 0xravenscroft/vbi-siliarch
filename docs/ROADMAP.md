@@ -85,6 +85,6 @@ See [System Overview](architecture/SYSTEM_OVERVIEW.md), [Trust and Evidence](arc
 
 
 **SILIARCH**  
-Ravenscroft Industries  
-RAVENSCROFT Engineering Research  
+RAVENSCROFT INDUSTRIES  
+SILIARCH | Engineering Research  
 *Research. Engineer. Verify.*
