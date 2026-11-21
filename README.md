@@ -2,12 +2,23 @@
 
 **Adaptive Trusted Hardware and Computing Platform**
 
-Ravenscroft Industries  
-RAVENSCROFT Engineering Research
+**RAVENSCROFT INDUSTRIES**  
+*Engineering Research and Product Development*
 
-SILIARCH is a hardware and systems engineering research project within Ravenscroft Industries, focused on device capability models, secure computing and reproducible verification.
+SILIARCH is an engineering research product in the RAVENSCROFT INDUSTRIES portfolio, focused on device capability models, secure computing and reproducible verification.
 
 The work begins with a narrow but important problem. A device can declare its processor architecture, memory capacity and available interfaces, but a declaration is not proof of the underlying hardware. SILIARCH builds the software foundations needed to assess those declarations without confusing them with measurements or trusted evidence.
+
+## Product identity
+
+| Attribute | Positioning |
+|---|---|
+| Parent brand | **RAVENSCROFT INDUSTRIES** |
+| Product | **SILIARCH** |
+| Product focus | Adaptive trusted hardware and computing platform |
+| Development stage | Foundation research and early software validation |
+
+SILIARCH is presented as a distinct product of RAVENSCROFT INDUSTRIES. Public descriptions distinguish published engineering work from proposed capabilities and do not imply production readiness, certified security or independently verified hardware.
 
 ## Engineering objective
 
@@ -125,6 +136,5 @@ No license has been selected. Public repository access does not itself grant per
 
 
 **SILIARCH**  
-Ravenscroft Industries  
-RAVENSCROFT Engineering Research  
+A RAVENSCROFT INDUSTRIES product  
 *Research. Engineer. Verify.*
