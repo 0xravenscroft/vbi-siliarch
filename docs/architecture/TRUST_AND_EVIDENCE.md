@@ -69,6 +69,6 @@ See [System Overview](SYSTEM_OVERVIEW.md) and [Engineering Roadmap](../ROADMAP.m
 
 
 **SILIARCH**  
-Ravenscroft Industries  
-RAVENSCROFT Engineering Research  
+RAVENSCROFT INDUSTRIES  
+SILIARCH | Engineering Research  
 *Research. Engineer. Verify.*
