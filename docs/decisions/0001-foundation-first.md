@@ -1,50 +1,43 @@
 # ADR-0001: Start with a Portable Capability Model
 
 Status: Accepted
-
 Date: 2026-11-11
 
 ## Context
 
-SILIARCH will eventually investigate firmware integrity, FPGA logic, processor-specific interfaces, and hardware attestation. Starting with all of these at once would make failures difficult to isolate.
+SILIARCH will investigate device capabilities, platform-specific interfaces, firmware integrity and hardware verification. These areas need a shared vocabulary for declarations, requirements and evidence.
 
-We first need a clear way to represent device claims, check their structure, and explain what an assessment does and does not prove.
+Starting with hardware integrations before defining that vocabulary would make defects difficult to isolate and tests difficult to reproduce.
 
-## Options
+## Options considered
 
-1. Start with an FPGA implementation. This would teach RTL early but require simulation and timing decisions before the data model is established.
-2. Build the entire architecture. This would create interfaces for components with no tested requirements.
-3. Start with a small portable capability model. This lets us test the data contract and evaluation rules before adding hardware integrations.
+1. **Start with FPGA and RTL work.** This would introduce hardware simulation early, but leave the data contract and assessment rules unresolved.
+2. **Build the full platform architecture first.** This would establish interfaces for components without validated requirements.
+3. **Start with a portable capability model.** This would allow field rules, failure handling and requirement matching to be tested independently of any board.
 
 ## Decision
 
 Choose option 3.
 
-The first implementation will use Python and the standard library where practical. It will validate a declared device profile and evaluate explicit capability requirements. It will not claim physical device verification.
+Use Python and its standard library for the initial profile model, validation and requirement assessment. Keep parsing, validation, evaluation and evidence recording as separate responsibilities.
 
-Platform adapters, RTL modules, and attestation mechanisms will be added as separate, testable pieces when their interfaces and requirements are understood.
+The first implementation must not imply that checking a declaration verifies a physical device. RTL experiments, firmware work and platform adapters will be introduced as independently testable components.
 
 ## Consequences
 
-Benefits:
-- Small, inspectable changes
-- Early tests for invalid and boundary inputs
-- Clear separation between declarations and evidence
-- Less coupling to one board or toolchain
+**Benefits**
+- Small changes with observable behavior
+- Early validation of type, range and malformed-input rules
+- Clear separation between declared properties and evidence
+- No dependency on a specific board or hardware toolchain
 
-Costs:
-- Hardware experiments begin later
-- The initial model cannot authenticate a real device
-- Some interfaces may need revision after hardware testing
+**Trade-offs**
+- Hardware verification begins after the portable contract is understood
+- The first model cannot authenticate devices
+- Hardware experiments may require contract and interface revisions
 
-## Review
+## Review trigger
 
-Revisit this decision if a hardware experiment reveals that the chosen profile format or interface boundaries cannot represent the required behavior.
+Revisit this decision when an implemented hardware adapter, RTL experiment or assurance requirement demonstrates that the portable contract cannot represent a necessary property or result.
 
-Related documents: [System Overview](../architecture/SYSTEM_OVERVIEW.md), [Trust and Evidence](../architecture/TRUST_AND_EVIDENCE.md), [Roadmap](../ROADMAP.md).
-
-
-**SILIARCH**  
-RAVENSCROFT INDUSTRIES  
-SILIARCH | Engineering Research  
-*Research. Engineer. Verify.*
+Related documents: [System Overview](../architecture/SYSTEM_OVERVIEW.md), [Trust and Evidence](../architecture/TRUST_AND_EVIDENCE.md) and [Engineering Roadmap](../ROADMAP.md).
