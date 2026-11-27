@@ -1,14 +1,14 @@
 # Device Profile v0.1
 
-Status: Specification published. Initial Python validation is under review; JSON parsing and capability evaluation remain planned.
+Status: Specification published. Initial Python validation is available; strict JSON input and capability assessment are not yet implemented.
 
 ## Purpose
 
-A device profile describes claimed capabilities. It does not authenticate a device, measure hardware, or establish a security state.
+A device profile is a structured declaration of device properties. It is not a hardware inventory, authenticated identity or measurement record.
 
-The planned input pipeline will read one JSON object, validate its fields and compare it with a separate set of requirements.
+Version 0.1 defines the first portable input contract for SILIARCH. All input is untrusted until it passes the applicable validation rules.
 
-## Example profile
+## Profile format
 
 ```json
 {
@@ -20,25 +20,33 @@ The planned input pipeline will read one JSON object, validate its fields and co
 }
 ```
 
-The values are fictional test data.
-
-## Field definitions
+This is fictional test data.
 
 | Field | Type | Rule |
 |---|---|---|
-| `schema_version` | string | Must equal `0.1` |
-| `device_id` | string | 1 to 64 ASCII letters, digits, periods, underscores, or hyphens; starts with a letter or digit |
-| `architecture` | string | One of `arm64`, `riscv64`, `x86_64` |
-| `memory_bytes` | integer | From 1 to 9,223,372,036,854,775,807 |
-| `capabilities` | array of strings | Unique values drawn from `uart`, `spi`, and `i2c` |
+| `schema_version` | String | Exactly `"0.1"` |
+| `device_id` | String | 1 to 64 ASCII characters; first is a letter or digit; remaining characters may be letters, digits, periods, underscores or hyphens |
+| `architecture` | String | Exactly one of `arm64`, `riscv64`, `x86_64` |
+| `memory_bytes` | Integer | From 1 through 9,223,372,036,854,775,807 inclusive |
+| `capabilities` | Array of strings | Zero or more unique values from `uart`, `spi`, `i2c` |
 
-All five keys are required. Unknown keys are rejected in this version. An empty capabilities array is valid.
+All five fields are mandatory. Additional fields are rejected. An empty `capabilities` array is allowed. Boolean values are invalid for `memory_bytes` even though Python treats booleans as a subtype of integers.
 
-A boolean is not an integer for this contract, even though Python treats booleans as a subtype of integers.
+The `device_id` is a declared identifier, not proof of a unique physical device.
 
-The JSON reader must reject duplicate keys rather than silently keeping one value. Input-size limits will be established for the command-line interface before accepting untrusted files.
+## Input parsing requirements
 
-## Example requirement
+The current [Python validator](../../src/siliarch/profile.py) receives Python objects. It does not parse JSON text.
+
+The planned JSON reader must:
+- Reject malformed JSON.
+- Reject duplicate object keys instead of keeping the first or last value.
+- Enforce a documented byte-size limit before parsing untrusted files.
+- Pass the decoded object to the profile validator without inventing missing values.
+
+Parsing and validation are separate boundaries. A JSON document that parses successfully can still fail the profile contract.
+
+## Requirement example
 
 ```json
 {
@@ -48,49 +56,44 @@ The JSON reader must reject duplicate keys rather than silently keeping one valu
 }
 ```
 
-The requirement is evaluated only after its structure and the device profile have been validated. Requirement validation rules will be finalized with the evaluator module.
+This object illustrates a proposed requirement format. Its validation rules and evaluator have not yet been implemented.
 
-## Outcomes
+## Assessment outcomes
 
 | Outcome | Meaning |
 |---|---|
-| Invalid input | The profile or requirement violates its format or field rules |
-| Match | The declared profile satisfies the validated requirement |
-| No match | At least one declared value fails a requirement |
+| Invalid input | The profile or requirement violates its contract |
+| Match | Valid declared properties satisfy validated requirements |
+| No match | Valid declared properties fail at least one validated requirement |
 
-A match never means hardware verification.
+Invalid input is not a no-match result. A match does not establish the truth of the declaration.
 
-## Test cases for the first implementation
+## Required tests
 
-1. A complete example profile is accepted.
-2. A missing required field is rejected.
-3. An extra field is rejected.
-4. A boolean memory value is rejected.
-5. A zero or negative memory value is rejected.
-6. A repeated capability is rejected.
-7. A duplicate JSON object key is rejected.
-8. An unsupported schema version is rejected.
-9. A matching requirement produces Match.
-10. A requirement for an absent capability produces No match.
+The foundation test plan includes:
 
-The tests must be repeatable and must not require network access or physical hardware.
+1. Accept a complete valid profile.
+2. Reject missing and unknown fields.
+3. Reject unsupported schema versions.
+4. Enforce identifier character and length boundaries.
+5. Reject boolean, zero, negative and oversized memory values.
+6. Reject unsupported or repeated capabilities.
+7. Accept an empty capability list.
+8. Reject duplicate keys in the planned JSON reader.
+9. Return Match for a valid profile that meets a valid requirement.
+10. Return No match for a valid profile missing a required capability.
+
+The initial tests in [`tests/test_profile.py`](../../tests/test_profile.py) cover a subset of these cases. The full set is not yet complete.
+
+Tests must be repeatable without network access or physical hardware.
 
 ## Implementation order
 
-1. Define a pure profile validator.
-2. Add tests for valid and invalid profiles.
-3. Parse JSON with duplicate-key detection.
+1. Review and complete pure profile validation.
+2. Extend boundary and negative tests.
+3. Add strict JSON input handling.
 4. Define and validate requirement objects.
-5. Implement deterministic capability evaluation.
-6. Add a minimal command-line entry point.
-7. Record what the results prove and what they do not prove.
+5. Implement deterministic comparison.
+6. Add a small CLI and evidence-aware result format.
 
-Initial Python validation is published in [`src/siliarch/profile.py`](../../src/siliarch/profile.py), with unit tests in [`tests/test_profile.py`](../../tests/test_profile.py). Neither JSON parsing nor requirement evaluation is implemented yet.
-
-See [System Overview](SYSTEM_OVERVIEW.md) and [Trust and Evidence](TRUST_AND_EVIDENCE.md).
-
-
-**SILIARCH**  
-RAVENSCROFT INDUSTRIES  
-SILIARCH | Engineering Research  
-*Research. Engineer. Verify.*
+Related documents: [System Overview](SYSTEM_OVERVIEW.md), [Trust and Evidence](TRUST_AND_EVIDENCE.md) and [Engineering Roadmap](../ROADMAP.md).
