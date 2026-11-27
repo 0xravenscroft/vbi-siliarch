@@ -1,90 +1,73 @@
 # Engineering Roadmap
 
-Status: F0 documentation published. F1 development is in progress. No implementation milestone is complete.
+Status: Foundation documentation and initial Python validation are published. The first end-to-end capability assessment is not complete.
 
-This roadmap lists deliverables and exit criteria, not release promises. Progress will be recorded when results can be reproduced.
+This roadmap records dependencies, deliverables and acceptance criteria. Dates are planning targets, not release commitments.
 
 ## F0. Repository foundation
 
-Goal: establish a readable architecture, a controlled development process, and explicit security boundaries.
+**Goal:** Establish a reviewable repository, initial architecture and explicit trust boundaries.
 
-Deliverables:
-- System overview and trust model
-- Architecture decision records
-- A documented, reviewable Git history
-- Local environment checks
+Published:
+- [System Overview](architecture/SYSTEM_OVERVIEW.md)
+- [Trust and Evidence](architecture/TRUST_AND_EVIDENCE.md)
+- [Device Profile v0.1](architecture/DEVICE_PROFILE_V0_1.md)
+- [ADR-0001](decisions/0001-foundation-first.md)
 
-Exit criteria: links resolve, documents agree on scope, and a clean checkout contains the expected files.
+Remaining review: verify links, reconcile documentation with implementation and record reproducible local checks.
+
+**Exit criteria:** A clean checkout has the documented files, working links and an understandable Git history.
 
 ## F1. Device capability prototype
 
-Goal: assess a declared hardware profile against explicit requirements.
+**Goal:** Determine whether a valid, declared device profile satisfies a separately validated requirement.
 
-Deliverables:
-- Versioned profile format
-- Parser and field validation
-- Capability evaluation with predictable outcomes
-- Command-line interface
-- Positive, negative, and boundary tests
-- Repeatable execution instructions
+| Order | Work item | Status |
+|---|---|---|
+| 1 | Define Device Profile v0.1 | Specification published |
+| 2 | Validate fields, types and ranges | Initial Python implementation published |
+| 3 | Test valid, invalid and boundary values | Initial unit tests published; more cases required |
+| 4 | Read JSON with duplicate-key rejection and bounded input size | Planned |
+| 5 | Define and validate requirement objects | Planned |
+| 6 | Evaluate declared capabilities deterministically | Planned |
+| 7 | Provide a minimal CLI and reproducible result output | Planned |
+| 8 | Record test environment and limitations | Planned |
 
-Exit criteria: all documented test cases pass, invalid input fails clearly, and results do not claim device authenticity.
+The current code is in [`src/siliarch/profile.py`](../src/siliarch/profile.py). Its test suite is in [`tests/test_profile.py`](../tests/test_profile.py).
+
+Review priorities:
+- Keep one implementation of each validator and avoid repeated checks.
+- Test identifier length and character boundaries, numeric limits and every allowed capability.
+- Reject malformed JSON and repeated object keys before validation.
+- Keep invalid input distinct from a valid profile that does not meet requirements.
+- Document exactly what a match does and does not prove.
+
+**Exit criteria:** All contract cases are reproducible, invalid inputs fail clearly, requirement evaluation produces consistent outcomes and no result implies physical device verification.
 
 ## R1. Secure register controller
 
-Goal: build and verify a small RTL module.
+**Goal:** Specify and verify a small RTL register block.
 
-Deliverables:
-- Register and access-control specification
-- Clock and reset behavior
-- SystemVerilog module and testbench
-- Waveform inspection notes
-- Assertions for selected properties
+Deliverables: access-control rules, reset and clock semantics, SystemVerilog module, testbench, selected assertions and waveform review.
 
-Exit criteria: a repeatable simulation demonstrates specified behavior, with assumptions and coverage limits recorded. Hardware implementation is a separate milestone.
+**Exit criteria:** Reproducible simulation with documented assumptions, assertions and coverage limits. Physical implementation is a separate claim.
 
 ## H1. Firmware assurance research
 
-Goal: evaluate integrity measurement, device identity, and secure boot design options in controlled environments.
+**Goal:** Evaluate firmware integrity, device identity and secure boot design options in controlled environments.
 
-Exit criteria: experiments identify their trust assumptions, methods, evidence, and limitations.
+**Exit criteria:** Experiments record their threat model, trust assumptions, method, evidence and limitations.
 
 ## P1. Platform adapters
 
-Goal: investigate selected ARM and RISC-V targets without coupling the portable core to a particular board.
+**Goal:** Investigate selected ARM and RISC-V hardware without coupling the portable core to a specific board.
 
-Exit criteria: each claimed target has an implemented adapter, reproducible compatibility tests, and a documented support boundary.
+**Exit criteria:** Each supported target has an implemented adapter, reproducible compatibility tests and a documented support boundary.
 
-## First 30 days
+## Development practice
 
-| Period | Focus | Expected artifact |
-|---|---|---|
-| Days 1-7 | Git, Python, bits, binary representation, device fields | First profile and review notes |
-| Days 8-14 | Types, validation, capability requirements | Validator and unit tests |
-| Days 15-21 | Module boundaries, CLI, errors | Repeatable foundation prototype |
-| Days 22-30 | Boolean logic, registers, clock, reset | Initial RTL experiment |
+Every change should identify the problem, affected files, dependency changes and a method of verification. Keep source, tests and documentation changes reviewable. Do not mark a milestone complete on the basis of a commit message alone.
 
-The schedule can change when tests expose gaps in the foundations.
+Code and tests are written in English. Local experiments and hardware-specific claims require evidence before they appear as supported features.
 
-## Immediate backlog
-
-| Priority | Work item | Status |
-|---|---|---|
-| P0 | Finish architecture documentation | Published; review ongoing |
-| P0 | Define profile schema version 0.1 | Specification published |
-| P0 | Implement strict profile validation | Initial implementation under review |
-| P0 | Evaluate declared capabilities | Planned |
-| P0 | Add deterministic unit tests | Initial tests published; expansion planned |
-| P1 | Record test provenance | Planned |
-| P1 | Set up basic CI | Planned |
-| P1 | Write first RTL testbench | Planned |
-
-Do not mark a work item complete from a commit message alone. Review the artifact and its evidence.
-
-See [System Overview](architecture/SYSTEM_OVERVIEW.md), [Trust and Evidence](architecture/TRUST_AND_EVIDENCE.md), and [ADR-0001](decisions/0001-foundation-first.md).
-
-
-**SILIARCH**  
-RAVENSCROFT INDUSTRIES  
-SILIARCH | Engineering Research  
-*Research. Engineer. Verify.*
+See [System Overview](architecture/SYSTEM_OVERVIEW.md) and [Trust and Evidence](architecture/TRUST_AND_EVIDENCE.md) for architectural and assurance boundaries.
