@@ -1,95 +1,90 @@
 # System Overview
 
-Status: Initial Python validation and unit tests published. JSON ingestion, requirement evaluation and evidence recording remain planned.
+Status: Initial Python profile validation and unit tests are published. JSON ingestion, requirement evaluation and result recording are planned.
 
-## The problem
+## Problem
 
-A development board, firmware manifest, or configuration file can describe a processor and its capabilities. Those descriptions are useful for software decisions, but they are not hardware measurements and do not prove that a device is trustworthy.
+A device manifest can declare processor architecture, memory and available interfaces. These declarations can guide software decisions, but their format and their truth are separate questions.
 
-SILIARCH begins by making that distinction explicit. The foundation design separates structured profile validation from the later comparison of declared capabilities with engineering requirements.
+SILIARCH starts by validating the format. Requirement matching follows only after both the profile and the requirements have passed their own checks. Hardware identity and integrity need separate evidence.
 
-## Foundation data flow
+## Component boundaries
+
+| Component | Input | Responsibility | Status |
+|---|---|---|---|
+| JSON parser | Raw text or file | Read bounded input and reject ambiguous JSON, including duplicate keys | Planned |
+| Profile validator | Python object | Enforce the Device Profile v0.1 contract | Initial implementation |
+| Requirement validator | Python object | Enforce the requirement contract before matching | Planned |
+| Capability evaluator | Valid profile and valid requirements | Compare declared values and return a deterministic outcome | Planned |
+| Result writer | Assessment and execution context | Preserve outcome, reasons and limitations | Planned |
+| Hardware adapter | Platform-specific interface | Collect observations under a defined measurement policy | Future research |
+
+A parser does not prove who supplied the input. A validator does not measure hardware. An evaluator must not infer properties that the validated profile does not declare.
+
+## Data flow
 
 ```mermaid
 flowchart TD
-    A[Device profile] --> B[Profile validation]
-    B --> C[Capability evaluation]
-    R[Requirements] --> C
-    C --> D[Assessment]
-    D --> E[Result record]
+    A["Python profile object"] --> V["Profile validator (available)"]
+    J["JSON input (planned)"] --> P["Strict JSON parser (planned)"]
+    P --> V
+    V --> E["Capability evaluator (planned)"]
+    R["Validated requirements (planned)"] --> E
+    E --> O["Assessment and evidence record (planned)"]
 ```
 
-The diagram describes the intended end-to-end flow. Initial validation is available in [`src/siliarch/profile.py`](../../src/siliarch/profile.py) and is exercised by [`tests/test_profile.py`](../../tests/test_profile.py). Strict JSON ingestion, capability evaluation and result recording remain planned.
+The published Python validator works with supplied objects. The JSON-to-object path and every stage after profile validation are still to be implemented.
 
-A valid assessment means the supplied declaration satisfies a defined requirement. It says nothing by itself about the real device, firmware integrity, or the origin of the declaration.
+### Runtime and design dependencies
 
-## Planned component boundaries
+The files have distinct roles:
 
-| Component | Responsibility | Out of scope |
-|---|---|---|
-| Profile parser | Read structured input | Verify the source of the profile |
-| Validator | Check required fields, types, and limits | Prove physical capabilities |
-| Evaluator | Compare validated claims with requirements | Infer unspecified features |
-| Result writer | Record the outcome and reason | Invent tests or supporting evidence |
+- [`DEVICE_PROFILE_V0_1.md`](DEVICE_PROFILE_V0_1.md) states the data contract. It is a design reference, not a runtime dependency.
+- [`src/siliarch/profile.py`](../../src/siliarch/profile.py) implements memory and profile checks.
+- [`tests/test_profile.py`](../../tests/test_profile.py) imports the Python functions and exercises expected outcomes.
+- [`TRUST_AND_EVIDENCE.md`](TRUST_AND_EVIDENCE.md) establishes how reported results may be interpreted.
+- [`docs/ROADMAP.md`](../ROADMAP.md) tracks work required to reach an end-to-end prototype.
 
-The parser and validator must reject malformed input. The evaluator must not silently substitute defaults for missing security-relevant properties.
+The test command runs from the repository root:
 
-## First data contract
+```bash
+PYTHONPATH=src python3 -m unittest discover -s tests -p 'test_*.py' -v
+```
 
-Device Profile v0.1 defines five fields:
+The `PYTHONPATH` value adds `src` to Python's module search path. It allows the tests to import `siliarch.profile` without moving the production module into the test directory.
 
-| Field | Meaning |
-|---|---|
-| `schema_version` | Profile format version |
-| `device_id` | Profile identifier, not a verified device identity |
-| `architecture` | Claimed processor architecture |
-| `memory_bytes` | Claimed memory capacity in bytes |
-| `capabilities` | Claimed hardware features |
+## Profile contract
 
-Permitted values, type checks, limits and unknown-field behavior are documented in [Device Profile v0.1](DEVICE_PROFILE_V0_1.md). The contract may change in later experimental versions.
+Device Profile v0.1 contains five fields: `schema_version`, `device_id`, `architecture`, `memory_bytes` and `capabilities`. All are required and unknown fields are rejected. Detailed rules are in the [profile specification](DEVICE_PROFILE_V0_1.md).
 
-### Worked example
+A successful validation result establishes only that supplied data follows those rules. It does not show that a device exists or that its description is accurate.
 
-Suppose a fictional board profile claims an ARM64 processor, 65,536 bytes of memory, and a UART interface. An application requires ARM64, at least 32,768 bytes of memory, and UART.
+## Example assessment
 
-The evaluator should report that the *declared* profile matches. It must not report that the physical board was inspected or attested.
+A fictional profile declares:
 
-Malformed input should produce a validation error rather than a successful or unsuccessful capability assessment.
+- `architecture` = `arm64`
+- `memory_bytes` = `65536`
+- `capabilities` = `["uart"]`
 
-## Long-term architecture
+Suppose a requirement asks for ARM64, at least 32768 bytes of memory and UART. A future evaluator should report a match of **declared values** if both input objects pass validation. It must not report a physical hardware measurement.
 
-| Layer | Purpose | Initial state |
-|---|---|---|
-| Device Capability | Describe device properties | Foundation target |
-| Portable Core | Validate and evaluate profiles | Foundation target |
-| Hardware Adapters | Collect platform-specific information | Future work |
-| Trust and Attestation | Verify identities and integrity evidence | Future work |
-| Verification | Run simulations, tests, and formal checks | Starts with unit tests |
-| Evidence and Provenance | Preserve test context and findings | Starts with local results |
-| AI Extensions | Assist bounded research tasks | Future work |
+Malformed input must produce a validation error rather than a match or no-match result.
 
-A hardware adapter will need an explicit support matrix and test evidence for each platform. Shared processor architecture does not guarantee shared peripherals, firmware behavior, or security properties.
+## Future hardware work
 
-## Initial boundaries
+The longer-term design separates portable software checks from adapters, RTL verification and trust mechanisms. Planned work includes FPGA experiments, embedded firmware and ARM or RISC-V integration. A common processor architecture does not imply common peripherals, firmware or security features.
 
-The first prototype will not perform secure boot, verify cryptographic attestations, inspect live hardware, or guarantee platform compatibility.
+Physical measurement and cryptographic attestation will require platform-specific methods, trustworthy identities, measurement definitions, freshness checks and verification policies.
 
-It will run locally using Python and its standard library where practical. RTL and hardware measurement tools will be added when there are testable requirements for them.
+## Acceptance conditions
 
-## Engineering acceptance
+The foundation capability prototype is ready for review when:
 
-The foundation is ready for review when:
+1. Input size and JSON parsing rules are enforced.
+2. Profile and requirement validation cover documented invalid and boundary cases.
+3. Capability outcomes and failure reasons are reproducible.
+4. The CLI and tests run through documented commands.
+5. Results distinguish declarations from measured or attested properties.
 
-1. The profile format is documented.
-2. Valid and invalid inputs have deterministic outcomes.
-3. Unit tests cover missing, malformed, unsupported, and boundary-value cases.
-4. The executable and tests run from documented commands.
-5. A result clearly distinguishes a declaration from a verified hardware property.
-
-See [Trust and Evidence](TRUST_AND_EVIDENCE.md), [Roadmap](../ROADMAP.md), and [ADR-0001](../decisions/0001-foundation-first.md).
-
-
-**SILIARCH**  
-RAVENSCROFT INDUSTRIES  
-SILIARCH | Engineering Research  
-*Research. Engineer. Verify.*
+See [Engineering Roadmap](../ROADMAP.md) and [ADR-0001](../decisions/0001-foundation-first.md).
