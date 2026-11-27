@@ -2,139 +2,95 @@
 
 **Adaptive Trusted Hardware and Computing Platform**
 
-**RAVENSCROFT INDUSTRIES**  
-*Engineering Research and Product Development*
+RAVENSCROFT INDUSTRIES
 
-SILIARCH is an engineering research product in the RAVENSCROFT INDUSTRIES portfolio, focused on device capability models, secure computing and reproducible verification.
+SILIARCH is an engineering research project concerned with hardware capability descriptions, portable validation and the evidence required to support trust decisions.
 
-The work begins with a narrow but important problem. A device can declare its processor architecture, memory capacity and available interfaces, but a declaration is not proof of the underlying hardware. SILIARCH builds the software foundations needed to assess those declarations without confusing them with measurements or trusted evidence.
+A device profile can declare a processor architecture, memory capacity and available interfaces. Software can check those claims against a defined contract. It cannot establish that the claims are true without independent evidence.
 
-## Product identity
+## Objective
 
-| Attribute | Positioning |
-|---|---|
-| Parent brand | **RAVENSCROFT INDUSTRIES** |
-| Product | **SILIARCH** |
-| Product focus | Adaptive trusted hardware and computing platform |
-| Development stage | Foundation research and early software validation |
+Build a portable foundation that can:
 
-SILIARCH is presented as a distinct product of RAVENSCROFT INDUSTRIES. Public descriptions distinguish published engineering work from proposed capabilities and do not imply production readiness, certified security or independently verified hardware.
+1. Validate versioned device profiles without assuming the source is trustworthy.
+2. Compare valid declarations with explicit hardware requirements.
+3. Record what was checked, how it was checked and what remains unverified.
+4. Introduce hardware-specific evidence only when the underlying interfaces and tests are defined.
 
-## Engineering objective
+The current implementation addresses profile validation. Requirement evaluation, evidence records and hardware integration remain future work.
 
-Develop a portable framework for describing hardware capabilities, enforcing explicit data contracts and evaluating device requirements.
+## Current implementation
 
-The project separates three concerns:
-
-1. **Declaration**: What properties does a device profile claim?
-2. **Evaluation**: Is the profile valid and does it satisfy defined requirements?
-3. **Evidence**: Which properties have been established through independent tests, measurements or attestation?
-
-These concerns have different trust boundaries. A structurally valid profile may still contain false claims. Software validation cannot establish device identity or physical integrity.
-
-## Foundation implementation
-
-The first milestone uses Python to establish a small and testable Device Profile v0.1 model.
-
-| Field | Meaning | Contract |
+| Component | Status | Source |
 |---|---|---|
-| `schema_version` | Profile format | Must equal `0.1` |
-| `device_id` | Declared profile identifier | 1 to 64 permitted ASCII characters |
-| `architecture` | Processor architecture | `arm64`, `riscv64` or `x86_64` |
-| `memory_bytes` | Declared memory capacity | Integer from 1 to `2**63 - 1` |
-| `capabilities` | Declared interfaces | Unique entries from `uart`, `spi` and `i2c` |
+| Memory capacity validation | Implemented | [`profile.py`](src/siliarch/profile.py) |
+| Device Profile v0.1 validation | Initial implementation under review | [`profile.py`](src/siliarch/profile.py) |
+| Validation unit tests | Published, coverage expansion pending | [`test_profile.py`](tests/test_profile.py) |
+| Strict JSON input and duplicate-key detection | Planned | [Device Profile v0.1](docs/architecture/DEVICE_PROFILE_V0_1.md) |
+| Requirement validation and capability evaluation | Planned | [System Overview](docs/architecture/SYSTEM_OVERVIEW.md) |
+| Command-line interface and result records | Planned | [Engineering Roadmap](docs/ROADMAP.md) |
 
-All five fields are required. Unexpected fields are rejected. The complete field rules are maintained in the [Device Profile v0.1 specification](docs/architecture/DEVICE_PROFILE_V0_1.md).
+The current validator accepts Python values. It does not read JSON files, inspect hardware, authenticate devices or produce a capability assessment.
 
-### Published components
+### Device Profile v0.1
 
-| File | Responsibility |
+The contract requires exactly five fields:
+
+| Field | Rule |
 |---|---|
-| [`src/siliarch/profile.py`](src/siliarch/profile.py) | Memory range checks and an initial device profile validator |
-| [`tests/test_profile.py`](tests/test_profile.py) | Unit tests for accepted inputs, rejected inputs and selected schema rules |
-| [`docs/architecture/SYSTEM_OVERVIEW.md`](docs/architecture/SYSTEM_OVERVIEW.md) | Planned processing flow and component boundaries |
-| [`docs/architecture/TRUST_AND_EVIDENCE.md`](docs/architecture/TRUST_AND_EVIDENCE.md) | Trust assumptions and limits of verification evidence |
+| `schema_version` | String equal to `"0.1"` |
+| `device_id` | 1 to 64 allowed ASCII characters; begins with a letter or digit |
+| `architecture` | One of `arm64`, `riscv64`, `x86_64` |
+| `memory_bytes` | Integer from 1 through `2**63 - 1`; booleans rejected |
+| `capabilities` | List of unique values from `uart`, `spi` and `i2c` |
 
-The validation functions operate on supplied Python values. The JSON input layer, duplicate-key detection, requirement evaluator and command-line interface are not yet implemented.
+Unknown or missing fields are rejected. An empty capability list is valid. The [specification](docs/architecture/DEVICE_PROFILE_V0_1.md) is the authority for the full rules and planned parsing behavior.
 
-The profile validator remains under review. Boundary tests and code cleanup are still required before Device Profile v0.1 can be considered complete.
+## Repository structure
 
-### Run the tests
+| Path | Responsibility |
+|---|---|
+| [`src/siliarch/profile.py`](src/siliarch/profile.py) | Applies the profile contract to Python values |
+| [`tests/test_profile.py`](tests/test_profile.py) | Imports the validator and checks accepted and rejected inputs |
+| [`docs/architecture/DEVICE_PROFILE_V0_1.md`](docs/architecture/DEVICE_PROFILE_V0_1.md) | Defines field types, limits and expected outcomes |
+| [`docs/architecture/SYSTEM_OVERVIEW.md`](docs/architecture/SYSTEM_OVERVIEW.md) | Describes component boundaries and the intended data flow |
+| [`docs/architecture/TRUST_AND_EVIDENCE.md`](docs/architecture/TRUST_AND_EVIDENCE.md) | Defines trust assumptions and evidence limitations |
+| [`docs/ROADMAP.md`](docs/ROADMAP.md) | Tracks milestones and acceptance criteria |
+| [`docs/decisions/0001-foundation-first.md`](docs/decisions/0001-foundation-first.md) | Records why work starts with a portable software model |
 
-From the repository root:
+The specification describes intended behavior. The Python module implements part of that contract. The tests import the Python module and check its observable behavior. The documentation files are not loaded by the application at runtime.
+
+## Run the tests
+
+From the repository root, using Python 3:
 
 ```bash
 PYTHONPATH=src python3 -m unittest discover -s tests -p 'test_*.py' -v
 ```
 
-The tests check defined software behaviors. Passing tests do not authenticate a profile, inspect a physical board or establish hardware security.
+`PYTHONPATH=src` makes the `siliarch` module available for imports. The tests use Python's standard library and require no board or network access.
 
-## Architecture
+A passing test run demonstrates behavior for the cases exercised by those tests. It does not establish complete input coverage, hardware authenticity or production readiness.
 
-SILIARCH is being developed as a set of components with clear responsibilities.
+## Development sequence
 
-| Component | Responsibility | Status |
-|---|---|---|
-| Device profile validation | Enforce field names, types and permitted values | Initial implementation |
-| Structured input | Read JSON without silently accepting ambiguous data | Planned |
-| Capability evaluation | Compare validated claims with explicit requirements | Planned |
-| Evidence records | Preserve test context, results and limitations | Planned |
-| Hardware adapters | Collect platform-specific observations | Future research |
-| Trust and attestation | Evaluate identity and integrity evidence against a policy | Future research |
+The foundation follows the dependency order defined in the [roadmap](docs/ROADMAP.md):
 
-A capability match will mean that supplied data meets a requirement. It will not mean that the physical device has been verified.
+1. Review profile validation and extend boundary tests.
+2. Add strict JSON ingestion, including duplicate-key rejection and an input-size policy.
+3. Define and validate requirement objects.
+4. Implement deterministic capability evaluation.
+5. Add a command-line interface and reproducible result records.
+6. Begin the RTL secure register controller work as a separate milestone.
 
-## Engineering roadmap
+## Engineering boundaries
 
-| Milestone | Focus | Status |
-|---|---|---|
-| F0 | Repository foundation, architecture and trust documentation | Published |
-| F1 | Profile validation, strict JSON parsing, capability evaluation and CLI | In progress |
-| R1 | Secure register controller and SystemVerilog verification | Planned |
-| H1 | Firmware integrity and hardware assurance research | Planned |
-| P1 | ARM and RISC-V platform adapters | Planned |
+SILIARCH distinguishes a declared property from a validated data structure, a requirement match and a physical measurement. None of these should be described as cryptographic attestation unless the necessary identity, freshness, measurement and trust-policy checks exist.
 
-Immediate F1 priorities are validator review, boundary testing, duplicate-key-safe JSON parsing and deterministic requirement evaluation.
+Later research may cover FPGA and RTL verification, firmware integrity, secure boot, RISC-V and ARM adapters and hardware roots of trust. These capabilities are not implemented by the current Python prototype.
 
-A milestone is complete only when its acceptance criteria can be checked against reproducible results.
+The repository is a research and development project, not a certified security product. Security work is limited to authorized environments.
 
-## Research direction
+## License
 
-Long-term research includes computer architecture, digital logic, FPGA and RTL engineering, embedded firmware, RISC-V and ARM systems, secure boot, device identity, hardware roots of trust, attestation and formal verification.
-
-These are research objectives, not claims of implemented features, certified assurance or verified platform compatibility. Hardware-specific support will require its own implementation and test evidence.
-
-## Development practice
-
-Source code and technical documents are edited in Visual Studio Code. File operations, Git commands, builds and tests run in the integrated terminal.
-
-Changes should be focused, reviewable and supported by appropriate tests. Source and test updates are committed separately when practical. Architectural decisions and known limitations are documented alongside the implementation.
-
-Reproducibility matters more than feature count. Each result should make clear what was tested, under which assumptions and what remains unverified.
-
-## Documentation
-
-- [Engineering Roadmap](docs/ROADMAP.md)
-- [System Overview](docs/architecture/SYSTEM_OVERVIEW.md)
-- [Trust and Evidence](docs/architecture/TRUST_AND_EVIDENCE.md)
-- [Device Profile v0.1](docs/architecture/DEVICE_PROFILE_V0_1.md)
-- [ADR-0001: Start with a Portable Capability Model](docs/decisions/0001-foundation-first.md)
-
-## Current status
-
-Foundation documentation, initial Python validation code and unit tests are published. Full profile validation coverage and the capability evaluation pipeline are still in development.
-
-No physical hardware measurement, secure boot implementation, cryptographic attestation or production security assurance is claimed.
-
-## Scope and licensing
-
-SILIARCH focuses on trusted hardware and computing. General cyber defense, intelligence analysis and quantitative finance are maintained as separate research areas.
-
-Security experiments are restricted to authorized and controlled environments.
-
-No license has been selected. Public repository access does not itself grant permission to reuse or redistribute the source.
-
-
-**SILIARCH**  
-A RAVENSCROFT INDUSTRIES product  
-*Research. Engineer. Verify.*
+No license has been selected. Public access to this repository does not by itself grant permission to reuse or redistribute its contents.
