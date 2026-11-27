@@ -1,74 +1,66 @@
 # Trust and Evidence
 
-Status: Design specification. No hardware trust mechanism is implemented yet.
+Status: Design guidance. SILIARCH does not currently measure physical hardware or verify cryptographic attestations.
 
-## Purpose
+## Trust boundaries
 
-SILIARCH separates three things: a device claim, a software assessment of that claim, and evidence from a test or measurement. They answer different questions and must not be confused.
+A correctly formatted device profile can contain inaccurate or deliberately false information. Validation checks the structure of a declaration. It does not authenticate its source.
 
-A profile can be well formed and still be false. A matching capability requirement does not establish that the physical device supports the feature. The published Python tests evaluate declared data behavior, not hardware measurements or cryptographic attestation.
-
-## Boundaries
-
-| Boundary | Input | What SILIARCH can conclude |
+| Stage | Question answered | What it does not establish |
 |---|---|---|
-| Profile ingestion | Externally supplied device data | Whether the data meets the defined schema |
-| Capability evaluation | Valid profile and explicit requirements | Whether declared values meet the requirements |
-| Verification | Test output and execution context | Whether specific checks passed under stated conditions |
-| Attestation, future | Signed measurements and verification policy | Whether evidence satisfies a policy with trusted anchors |
+| Declaration | What does the source claim? | Truth or origin of the claim |
+| Validation | Does the supplied object conform to the profile contract? | Physical device properties |
+| Requirement evaluation | Do valid declared properties meet valid requirements? | Hardware compatibility beyond those claims |
+| Measurement | What was observed on specified hardware? | Properties not covered by the method |
+| Attestation | Does evidence satisfy a cryptographic verification policy? | General platform security outside that policy |
 
-Attestation requires more than a signature. The signing identity, trust anchor, freshness, scope, and measurement semantics all matter.
+The published [`profile.py`](../../src/siliarch/profile.py) addresses validation only. [`test_profile.py`](../../tests/test_profile.py) checks selected software behaviors. A passing unit test does not turn a claim into a measurement.
 
-## Initial threat model
+## Input threats and expected handling
 
-| Failure or misuse | Required response |
+| Condition | Expected handling |
 |---|---|
-| Malformed profile | Reject with a specific validation error |
-| Missing or unexpected fields | Apply the published schema policy |
-| Contradictory claims | Report the conflict rather than guessing |
-| Falsified capabilities | Treat the profile as untrusted |
-| Missing test evidence | Report the property as unverified |
-| Replayed measurements, future | Check freshness and policy requirements |
-| Compromised firmware, future | Investigate authenticated measurement and recovery controls |
+| Missing or unrecognized profile field | Reject under the versioned contract |
+| Incorrect type or out-of-range value | Reject with an explicit validation error |
+| Repeated capability | Reject rather than silently deduplicate |
+| Repeated JSON object key | Reject in the planned strict parser |
+| Oversized JSON input | Enforce a documented limit before parsing |
+| Unverified capability claim | Treat as declared and unverified |
+| Missing or contradictory evidence | Record the limitation; do not infer a passing result |
+| Replayed attestation evidence | Apply freshness and policy checks when attestation is implemented |
 
-This table is not a complete threat assessment. Each implementation will document its own assumptions and abuse cases.
+This is an initial design threat model, not a comprehensive security assessment.
 
 ## Evidence records
 
-When evidence records are introduced, each record should include:
+Future assessment records should retain enough information for another engineer to reproduce and evaluate a result:
 
-- Record format version and test identifier
-- Source revision and tool version
-- Input identity or digest when applicable
-- Test conditions and expected result
-- Observed result and outcome
-- Known limitations and failures
+- Record format version and check identifier
+- Source revision and test or tool version
+- Input identifier or digest when appropriate
+- Execution environment and test conditions
+- Expected and observed results
+- Outcome, failure details and known limitations
 
-Sensitive identifiers, credentials, and internal secrets must not be published in evidence files.
+Do not publish passwords, credentials, private keys or sensitive device identifiers in evidence files.
 
-## Levels of confidence
+## Verification terms
 
-- Declared: a source asserted a property.
-- Validated: the declaration passed structural checks.
-- Evaluated: the declaration met a defined requirement.
-- Simulated: a particular model passed specified tests.
-- Measured: a property was observed on identified hardware.
-- Attested: evidence met a defined cryptographic verification policy.
+Use these terms precisely:
 
-These are descriptions of different kinds of evidence, not a single universal ranking. A simulation result does not substitute for a hardware measurement, and a signature alone does not prove that a platform is secure.
+- **Declared:** A source asserted a property.
+- **Validated:** Data passed the applicable structural contract.
+- **Evaluated:** Valid claims were compared with explicit requirements.
+- **Simulated:** A model passed identified checks under stated conditions.
+- **Measured:** A property was observed on identified hardware using a stated method.
+- **Attested:** Cryptographic evidence met a specified verification policy.
 
-## Review questions
+These are different kinds of evidence, not interchangeable levels of assurance. A signature alone does not establish secure boot or device integrity. Verification also depends on identity, trust anchors, freshness, measurement meaning and policy.
 
-Every verification result should state what was tested, the environment, the expected outcome, the observed outcome, and what the result does not establish.
+## Review checklist
 
-See [System Overview](SYSTEM_OVERVIEW.md) and [Engineering Roadmap](../ROADMAP.md).
+Before publishing a security or compatibility result, document the claim, the evidence source, the method, the observed result, the environment, the assumptions and the limits. Unsupported properties remain unverified.
 
-## Reference
+The later firmware work may refer to [NIST SP 800-193, Platform Firmware Resiliency Guidelines](https://csrc.nist.gov/pubs/sp/800/193/final). SILIARCH does not claim compliance.
 
-[NIST SP 800-193: Platform Firmware Resiliency Guidelines](https://csrc.nist.gov/pubs/sp/800/193/final) is a research reference for later firmware assurance work. No compliance is claimed.
-
-
-**SILIARCH**  
-RAVENSCROFT INDUSTRIES  
-SILIARCH | Engineering Research  
-*Research. Engineer. Verify.*
+Related documents: [System Overview](SYSTEM_OVERVIEW.md), [Device Profile v0.1](DEVICE_PROFILE_V0_1.md) and [Engineering Roadmap](../ROADMAP.md).
